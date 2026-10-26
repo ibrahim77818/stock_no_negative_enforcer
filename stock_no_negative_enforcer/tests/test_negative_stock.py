@@ -158,6 +158,7 @@ class TestNegativeStock(TransactionCase):
         })
         picking.action_confirm()
         picking.action_assign()
-        picking.move_ids.quantity_done = 5
+        picking.move_ids.quantity = 5
+        picking.move_ids.picked = True
         with self.assertRaises(UserError):
             picking._action_done()

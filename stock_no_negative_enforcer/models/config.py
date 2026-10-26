@@ -19,8 +19,16 @@ class NegativeStockMixin(models.AbstractModel):
     def write(self, vals):
         res = super().write(vals)
         if 'allow_negative_stock' in vals or self._nn_invalidating_fields.intersection(vals):
-            self.clear_caches()
+            self._nn_invalidate_cache()
         return res
+
+    def _nn_invalidate_cache(self):
+        """Clear the resolution cache (and signal the other workers).
+
+        Since 17.0 decorated methods no longer expose ``clear_cache`` and
+        ``Model.clear_caches()`` is gone: invalidation goes through the registry.
+        """
+        self.env.registry.clear_cache()
 
 
 class StockWarehouse(models.Model):
