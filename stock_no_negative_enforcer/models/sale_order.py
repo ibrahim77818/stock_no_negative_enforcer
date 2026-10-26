@@ -15,7 +15,7 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         return bool(
             not self.display_type and self.product_id
-            and self.product_id.type == 'product'
+            and self.product_id.is_storable
             and not self.route_id
             and not self.is_downpayment
             and self.product_uom_qty > 0)

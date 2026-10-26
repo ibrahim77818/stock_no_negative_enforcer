@@ -16,22 +16,30 @@ class StockQuant(models.Model):
             "ORDER BY id FOR UPDATE", (product.id, location.id))
 
     @api.model
-    def _update_available_quantity(self, product_id, location_id, quantity,
-                                   lot_id=None, package_id=None, owner_id=None,
-                                   in_date=None):
-        policy = self.env['stock.negative.policy']
+    def _update_available_quantity(self, product_id, location_id, *args, **kwargs):
+        """Guard every decrease of on-hand stock in an internal location.
+
+        The parameters that follow ``location_id`` differ between versions (18.0
+        can also update the reserved quantity through this method), so the ones
+        needed here are read by name and every argument is forwarded unchanged.
+        ``quantity`` is the third positional argument or a keyword; core passes
+        lot, package and owner as keywords.
+        """
+        quantity = args[0] if args else kwargs.get('quantity')
+        lot_id = kwargs.get('lot_id')
+        package_id = kwargs.get('package_id')
+        owner_id = kwargs.get('owner_id')
         rounding = product_id.uom_id.rounding
-        guard = (
-            product_id.type == 'product'
+        guard = bool(
+            quantity
+            and product_id.is_storable
             and location_id.usage == 'internal'
             and float_compare(quantity, 0.0, precision_rounding=rounding) < 0
-            and not policy.is_negative_allowed(product_id, location_id)
+            and not self.env['stock.negative.policy'].is_negative_allowed(product_id, location_id)
         )
         if guard:
             self._nn_lock_quants(product_id, location_id)
-        res = super()._update_available_quantity(
-            product_id, location_id, quantity, lot_id=lot_id,
-            package_id=package_id, owner_id=owner_id, in_date=in_date)
+        res = super()._update_available_quantity(product_id, location_id, *args, **kwargs)
         if guard:
             quants = self._gather(product_id, location_id, lot_id=lot_id,
                                   package_id=package_id, owner_id=owner_id,
