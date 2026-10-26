@@ -5,9 +5,9 @@ import time
 import psycopg2
 from psycopg2 import errorcodes
 
-import odoo
 from odoo import SUPERUSER_ID, api
 from odoo.exceptions import UserError
+from odoo.modules.registry import Registry
 from odoo.tests import common, tagged
 
 
@@ -23,11 +23,11 @@ class TestConcurrentNegativeStock(common.BaseCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.reg = odoo.registry(common.get_db_name())
+        cls.reg = Registry(common.get_db_name())
         with cls.reg.cursor() as cr:
             env = api.Environment(cr, SUPERUSER_ID, {})
             product = env['product.product'].create({
-                'name': 'NN Concurrent Product', 'detailed_type': 'product'})
+                'name': 'NN Concurrent Product', 'type': 'consu', 'is_storable': True})
             location = env.ref('stock.warehouse0').lot_stock_id
             env['stock.quant']._update_available_quantity(product, location, cls.STOCK)
             cls.product_id, cls.location_id = product.id, location.id

@@ -1,6 +1,6 @@
 {
     'name': 'Strict Negative Stock Prevention',
-    'version': '16.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Inventory/Inventory',
     'author': 'Ibrahim Yahia',
     'website': 'https://www.linkedin.com/in/ibrahim-yahia',

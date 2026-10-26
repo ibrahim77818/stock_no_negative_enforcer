@@ -13,7 +13,8 @@ class TestNegativeStock(TransactionCase):
         cls.wh_b = Wh.create({'name': 'NN WH B', 'code': 'NNB'})
         cls.categ = cls.env['product.category'].create({'name': 'NN Categ'})
         cls.product = cls.env['product.product'].create({
-            'name': 'NN Product', 'detailed_type': 'product', 'categ_id': cls.categ.id})
+            'name': 'NN Product', 'type': 'consu', 'is_storable': True,
+            'categ_id': cls.categ.id})
         cls.partner = cls.env['res.partner'].create({'name': 'NN Customer'})
         cls.policy = cls.env['stock.negative.policy']
         cls.Quant = cls.env['stock.quant']
@@ -158,6 +159,7 @@ class TestNegativeStock(TransactionCase):
         })
         picking.action_confirm()
         picking.action_assign()
-        picking.move_ids.quantity_done = 5
+        picking.move_ids.quantity = 5
+        picking.move_ids.picked = True
         with self.assertRaises(UserError):
             picking._action_done()

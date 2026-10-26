@@ -18,7 +18,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='usage']" position="after">
                 <field name="allow_negative_stock" widget="boolean_toggle"
-                       attrs="{'invisible': [('usage', '!=', 'internal')]}"/>
+                       invisible="usage != 'internal'"/>
             </xpath>
         </field>
     </record>
@@ -40,8 +40,9 @@
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="is_storable" invisible="1"/>
                 <field name="allow_negative_stock" widget="boolean_toggle"
-                       attrs="{'invisible': [('detailed_type', '!=', 'product')]}"/>
+                       invisible="not is_storable"/>
             </xpath>
         </field>
     </record>
