@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_warehouse_form_negative_stock" model="ir.ui.view">
+        <field name="name">stock.warehouse.form.negative.stock</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="allow_negative_stock" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_location_form_negative_stock" model="ir.ui.view">
+        <field name="name">stock.location.form.negative.stock</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='usage']" position="after">
+                <field name="allow_negative_stock" widget="boolean_toggle"
+                       attrs="{'invisible': [('usage', '!=', 'internal')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_form_negative_stock" model="ir.ui.view">
+        <field name="name">product.category.form.negative.stock</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="allow_negative_stock" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_form_negative_stock" model="ir.ui.view">
+        <field name="name">product.template.form.negative.stock</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="allow_negative_stock" widget="boolean_toggle"
+                       attrs="{'invisible': [('detailed_type', '!=', 'product')]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
